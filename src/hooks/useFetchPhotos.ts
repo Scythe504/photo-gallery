@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface Photo {
+export interface Photo {
   id: string;
   author: string;
   width: number;

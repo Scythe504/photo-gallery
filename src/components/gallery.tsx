@@ -1,26 +1,30 @@
-import { useFetchPhotos, type UseFetchPhotosResult } from "../hooks/useFetchPhotos"
+import { type Photo, type UseFetchPhotosResult } from "../hooks/useFetchPhotos"
 import { ImageCard } from "./image-card"
+import Loader from "./loader"
 
-export const Gallery = ({limit}: {
-  limit: number;
-}) => {
-  const apiUrl = import.meta.env.VITE_PICSUM_API_URL
-  const result: UseFetchPhotosResult = useFetchPhotos({ apiUrl, limit })
-  
-  return <div>
-    {/* Cols 4 (desktop), 2 tablets, 1 mobile */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {
-        result.photos.map((photo)=> (
-          <ImageCard
-            key={photo.id}
-            authorName={photo.author}
-            imgSource={photo.download_url}
-            height={photo.height}
-            width={photo.width}
-          />
-        ))
-      }
-    </div>
+interface GalleryProps {
+  pRes: UseFetchPhotosResult;
+  favouriteIds: Set<string>
+  handleToggle: (photo: Photo) => void;
+}
+
+export const Gallery = ({ pRes, favouriteIds, handleToggle }: GalleryProps) => {
+
+  if (pRes.error) return <p>Failed to Load!</p>
+  if (pRes.loading) return <div className="flex justify-center items-center h-full">
+    <Loader />
   </div>
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {pRes.photos.map((photo) => (
+        <ImageCard
+          key={photo.id}
+          photo={photo}
+          favouriteIds={favouriteIds}
+          handleToggle={handleToggle}
+        />
+      ))}
+    </div>
+  )
 }
