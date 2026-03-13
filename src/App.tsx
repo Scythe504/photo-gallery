@@ -39,9 +39,6 @@ function App() {
   const [query, setQuery] = useState('')
   const [viewFavourites, setViewFavourites] = useState(false);
   const [favourites, dispatchFavourite] = useReducer(reducer, [], createInitialFavouritesState);
-  const onInputChange = useCallback((value: string) => {
-    setQuery(value)
-  }, [])
   const { photos, loading, error } = useFetchPhotos({ apiUrl, limit: 30 })
 
   const favouriteIds = useMemo(() => {
@@ -57,6 +54,10 @@ function App() {
 
   const handleToggle = useCallback((photo: Photo) => {
     dispatchFavourite({ type: "TOGGLE_FAVOURITES", payload: photo })
+  }, [])
+
+  const onInputChange = useCallback((value: string) => {
+    setQuery(value)
   }, [])
 
   useEffect(() => {
@@ -87,7 +88,7 @@ function App() {
       <div className="px-4 lg:px-16 md:px-8 min-h-120 flex items-center justify-center">
         <Gallery
           pRes={{
-            photos: !viewFavourites ? filteredPhotos : favourites,
+            photos: filteredPhotos,
             loading,
             error,
           }}
